@@ -29,6 +29,17 @@ Notas sobre puertos y adaptadores
 - `application/` depende de `core/` y puede recibir los puertos mediante inyección de dependencias.
 - `api/` depende de `application/` y orquesta solicitudes HTTP hacia los casos de uso.
 
+Infraestructura y Docker
+----------
+El proyecto incluye una configuración de Docker Compose para levantar el entorno de persistencia necesario para el desarrollo local.
+
+Para levantar los servicios
+Ejecuta el siguiente comando desde la raíz del proyecto para iniciar la base de datos en segundo plano:
+
+```bash
+docker-compose up -d
+```
+
 Requisitos
 ----------
 
@@ -36,6 +47,7 @@ Requisitos
 - `dotnet` CLI disponible en `PATH`.
 - (Opcional) Docker para contenedores y despliegue.
 - Variables de entorno y proveedor de secretos para credenciales (KeyVault, Vault, AWS Secrets Manager, etc.).
+- Docker y Docker Compose instalados.					
 
 Instalación y ejecución rápida
 -----------------------------
