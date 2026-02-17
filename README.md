@@ -1,21 +1,32 @@
 # Architecture_Hexagonal
 Este repositorio contiene un esqueleto de proyecto en C# siguiendo la Arquitectura Hexagonal (también conocida como Puertos y Adaptadores). El objetivo de esta arquitectura es separar el núcleo de la aplicación (reglas de negocio y casos de uso) de las dependencias externas (UI, bases de datos, servicios HTTP, colas, etc.) mediante capas y contratos bien definidos.
 
-### Motivación y por qué elegir Hexagonal
+# Tabla de Contenidos
+- [Motivo de la arquitectura ](#motivación-y-por-qué-elegir-hexagonal)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Notas sobre puertos y adaptadores](#notas-sobre-puertos-y-adaptadores)
+- [Variables de Entorno](#variables-de-entorno)
+- [Docker](#docker)
+- [Requisitos](#requisitos)
+- [Instalación y ejecución rápida](#instalación-y-ejecución-rápida)
+- [Swagger](#swagger)
+- [Estructura de Scripts](#estructura-de-scripts)
+
+# Motivación y por qué elegir Hexagonal
 
 - Separación clara de responsabilidades: el `core` define contratos (puertos) y modelos, sin referencias a infraestructuras concretas.
 - Testabilidad: los casos de uso (`application`) se pueden probar in-memory inyectando adaptadores falsos (mocks/stubs).
 - Flexibilidad y mantenibilidad: cambiar una infraestructura (por ejemplo, pasar de RabbitMQ a SQS) solo requiere implementar/adaptar un adaptador sin tocar la lógica de negocio.
 - Facilita el desarrollo en equipos y la adopción de patrones como CQRS, Mediator y Validación centralizada.
 
-### Estructura del proyecto
+# Estructura del proyecto
 
 - `api/` — Proyecto ASP.NET Core (Web API). Exposición HTTP, versionado y documentación (Swagger).
 - `application/` — Casos de uso, comandos/queries, handlers (MediatR), validaciones y DTOs específicos de los casos de uso.
 - `core/` — Entidades, interfaces (puertos), DTOs, constantes y contratos que representan el dominio y las abstracciones.
 - `infrastructure/` — Implementaciones concretas (adaptadores) de persistencia, mensajería, wrappers HTTP, almacenamiento de objetos, monitorización y otros servicios externos.
 
-### Notas sobre puertos y adaptadores
+# Notas sobre puertos y adaptadores
 
 - Los **puertos** (interfaces) deben vivir en `core/` y describir lo que la aplicación necesita (por ejemplo `IUserRepository`, `IMessagePublisher`).
 - Los **adaptadores** viven en `infrastructure/` y proveen las implementaciones concretas (`SqlUserRepository`, `RabbitMqPublisher`, `S3ObjectStore`).
@@ -56,6 +67,9 @@ dotnet run
 ```
 
 Por defecto la API arranca en `http://localhost:5000` o el puerto configurado por ASP.NET Core. Swagger estará disponible en entorno de desarrollo si está habilitado.
+
+# Swagger
+Una vez el proyecto este corriendo, el proyecto se puede abrir mediante swagger para trabajar con las APIs: `https://localhost:5001/swagger/index.html`
 
 # Estructura de Scripts
 
