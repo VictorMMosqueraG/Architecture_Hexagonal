@@ -1,5 +1,14 @@
 namespace Api
 {
+    using Api.Attributes;
+    using Api.Binders;
+    using Api.Configuration;
+    using Api.Configurations;
+    using Api.Filters;
+    using Api.Middlewares;
+    using Core.Dtos.AppSettingDto;
+    using FluentValidation;
+    using FluentValidation.AspNetCore;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
@@ -7,8 +16,8 @@ namespace Api
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Options;
-    using Microsoft.OpenApi.Models;
     using System.Text.Json;
+    using System.Text.RegularExpressions;
 
     public class Startup(IConfiguration configuration)
     {
@@ -16,49 +25,34 @@ namespace Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers()
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
-                    options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower;
-                });
+            services.AddDependencyInjection(Configuration);
 
-            services.AddApiVersioning(options =>
+            ValidatorOptions.Global.PropertyNameResolver = (type, memberInfo, expression) => Regex.Replace(memberInfo!.Name, @"([a-z0-9])([A-Z])", "$1_$2").ToLower();
+            services.AddControllers(options =>
             {
-                options.DefaultApiVersion = new ApiVersion(1, 0);
-                options.AssumeDefaultVersionWhenUnspecified = true;
-                options.ReportApiVersions = true;
-            });
-
-            services.AddCors(options =>
+                options.ModelBinderProviders.Insert(0, new SnakeModelBinderProvider());
+                options.Filters.Add<RouteParameterMappingFilter>();
+                options.Filters.Add<ApiExceptionFilterAttribute>();
+            })
+            .AddJsonOptions(options =>
             {
-                options.AddPolicy("AllowAll", builder =>
-                {
-                    builder.AllowAnyOrigin()
-                           .AllowAnyMethod()
-                           .AllowAnyHeader();
-                });
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+                options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower;
             });
-
-            services.Configure<SwaggerSettings>(Configuration.GetSection("Swagger"));
-
-            services.AddSwaggerGen(c =>
+            services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+            services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
+            services.AddDataProtection();
+            services.AddCors(o => o.AddPolicy("AllowAll", builder =>
             {
-                var swaggerConfig = Configuration.GetSection("Swagger").Get<SwaggerSettings>();
-                if (swaggerConfig != null)
-                {
-                    c.SwaggerDoc(swaggerConfig.Name, new OpenApiInfo 
-                    { 
-                        Title = swaggerConfig.Title,
-                        Version = "1.0.0"
-                    });
-                }
-            });
-
-            services.AddHealthChecks();
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
+            services.AddSwaggerConfiguration();
+            services.AddApiVersioningConfiguration();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptions<SwaggerSettings> swaggerSettings)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptions<SwaggerSettingDto> swaggerSettings)
         {
             if (env.IsDevelopment())
             {
@@ -71,34 +65,15 @@ namespace Api
             }
 
             app.UseCors("AllowAll");
-
+            app.UseMiddleware<HeaderValidationMiddleware>();
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint(swaggerSettings.Value.Url, swaggerSettings.Value.DefinitionName);
-                c.DocumentTitle = swaggerSettings.Value.DocumentTitle;
-            });
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-                endpoints.MapHealthChecks("/health");
-            });
+            app.AddSwaggerConfiguration(swaggerSettings);
         }
     }
 
-    public class SwaggerSettings
-    {
-        public string DocumentTitle { get; set; } = string.Empty;
-        public string Title { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
-        public string DefinitionName { get; set; } = string.Empty;
-        public string Url { get; set; } = string.Empty;
-    }
+
 }
 

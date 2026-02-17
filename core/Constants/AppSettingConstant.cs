@@ -2,5 +2,5 @@ namespace Core.Constants;
 
 public static class AppSettingConstant
 {
-    public const string Secret = "SecretSettings";
+    public const string Swagger = "Swagger";
 }
