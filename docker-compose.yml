@@ -11,7 +11,10 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
-      - ./mongo-init:/docker-entrypoint-initdb.d:ro
+      - ./mongo-init/00_run_all.js:/docker-entrypoint-initdb.d/00_run_all.js:ro
+      - ./mongo-init/security:/docker-entrypoint-initdb.d/01_security:ro
+      - ./mongo-init/schema:/docker-entrypoint-initdb.d/02_schema:ro
+      - ./mongo-init/seed:/docker-entrypoint-initdb.d/03_seed:ro
     networks:
       - billing_network
     healthcheck:
@@ -34,12 +37,12 @@ services:
     container_name: billing_mongo_express
     restart: unless-stopped
     profiles:
-      - dev  
+      - dev
     depends_on:
       mongodb:
-        condition: service_healthy 
+        condition: service_healthy
     ports:
-      - "127.0.0.1:8081:8081" 
+      - "127.0.0.1:8081:8081"
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ROOT_USER}
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_ROOT_PASSWORD}
