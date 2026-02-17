@@ -29,6 +29,11 @@ Notas sobre puertos y adaptadores
 - `application/` depende de `core/` y puede recibir los puertos mediante inyección de dependencias.
 - `api/` depende de `application/` y orquesta solicitudes HTTP hacia los casos de uso.
 
+Variables de Entorno
+----------
+
+Para poder trabajar comodamente y de manera segura se requiere que se copie el archivo **.env.example** y se le ponga el nombre a **.env** y sean asignados los valores correspondientes, esto con el fin de no dejar datos sensibles al accesso facil, se podria manejar tambien mediante el uso de un gestor de secretos como pude ser Vault.
+
 Infraestructura y Docker
 ----------
 El proyecto incluye una configuración de Docker Compose para levantar el entorno de persistencia necesario para el desarrollo local.
