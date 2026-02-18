@@ -1,6 +1,7 @@
 namespace Api.Filters;
 
 using Core.Exceptions;
+using Core.Messages;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -106,9 +107,8 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         var details = new ProblemDetails
         {
             Status = StatusCodes.Status500InternalServerError,
-            Title = "An error occurred while processing your request.",
-            Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
-            Detail = $"Exception => {context.Exception.Message} || StackTrace => {context.Exception.StackTrace} || InnerException {context.Exception.InnerException}."
+            Title = Message.InternalServerError,
+            Detail = $"{context.Exception.Message}"
         };
 
         context.Result = new ObjectResult(details)
