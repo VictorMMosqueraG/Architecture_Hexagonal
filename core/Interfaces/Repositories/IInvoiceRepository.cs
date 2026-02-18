@@ -3,7 +3,11 @@ namespace Core.Interfaces.Repositories;
 using Core.Entities;
 public interface IInvoiceRepository
 {
-    Task<IEnumerable<Invoice>> GetAllAsync();
+    Task<(IEnumerable<Invoice> Data, long Total)> GetAllAsync( 
+        int page,
+        int pageSize,
+        string? sort,
+        string? order);
     Task<IEnumerable<Invoice>> GetByClientIdAsync(string clientId);
     Task<IEnumerable<Invoice>> GetByStatusAsync(string status);
     Task<Invoice?> GetByIdAsync(string id);

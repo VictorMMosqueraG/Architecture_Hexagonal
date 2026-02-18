@@ -11,10 +11,17 @@ public class MongoInvoiceRepository : MongoBaseRepository<InvoiceDocument>, IInv
     public MongoInvoiceRepository(IConfiguration config)
         : base(config, "invoices") { }
 
-    public async Task<IEnumerable<Invoice>> GetAllAsync()
+    public async Task<(IEnumerable<Invoice> Data, long Total)> GetAllAsync(
+        int page,
+        int pageSize,
+        string? sort,
+        string? order
+    )
     {
-        var docs = await Collection.Find(_ => true).ToListAsync();
-        return docs.Select(MapToDomain);
+        var filter = Builders<InvoiceDocument>.Filter.Empty;
+        var (docs, total) = await GetPaginatedAsync(filter, page, pageSize, sort, order);
+
+        return (docs.Select(MapToDomain), total);
     }
 
     public async Task<IEnumerable<Invoice>> GetByClientIdAsync(string clientId)
