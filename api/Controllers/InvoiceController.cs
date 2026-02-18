@@ -1,8 +1,11 @@
 namespace Api.Features.Invoices;
 
+using Api.Attributes;
 using Application.Features.Invoices.CreateInvoice.Command;
 using Application.Features.Invoices.GetAllInvoice.Dtos;
 using Application.Features.Invoices.GetAllInvoice.Queries;
+using Application.Features.Invoices.GetByClientInvoice.Dtos;
+using Application.Features.Invoices.GetByClientInvoice.Queries;
 using Application.Features.Invoices.GetSummary.Dtos;
 using Application.Features.Invoices.GetSummary.Queries;
 using Core.Dtos.ResponsesDto;
@@ -37,5 +40,11 @@ public class InvoicesController(
     [HttpGet("summary")]
     public async Task<ResultDto<InvoiceSummaryDto>> GetSummary()
         => await _mediator.Send(new GetInvoicesSummaryQuery());
+
+    
+    [HttpGet("{id_cliente}")]
+    [RouteParameterMapping("id_cliente", "ClientId")]
+    public async Task<ResultDto<IEnumerable<InvoicByClientResponseDto>>> GetByClient([FromRoute] GetInvoicesByClientQuery query)
+        => await _mediator.Send(query);
     
 }
