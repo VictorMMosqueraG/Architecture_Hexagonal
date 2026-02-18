@@ -1,6 +1,9 @@
 namespace Api.Features.Invoices;
 
 using Application.Features.Invoices.CreateInvoice.Command;
+using Application.Features.Invoices.GetAllInvoice.Dtos;
+using Application.Features.Invoices.GetAllInvoice.Queries;
+using Core.Dtos.ResponsesDto;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,5 +19,12 @@ public class InvoicesController(
     [HttpPost]
     public async Task<IActionResult> CreateInvoice([FromBody] CreateInvoiceCommand command)
      => Created(nameof(CreateInvoice), await _mediator.Send(command));
+
+    /// <summary>
+    /// Listar todos los invoices
+    /// </summary>
+    [HttpGet]
+    public async Task<PaginatedResultDto<IEnumerable<InvoiceResponseDto>>> GetAll([FromQuery] GetAllInvoiceQuery query)
+        => await _mediator.Send(query);
     
 }
