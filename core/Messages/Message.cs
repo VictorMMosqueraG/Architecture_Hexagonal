@@ -9,4 +9,6 @@ public static class Message
     public static string EntityCreateSuccess(string entity) => $"Se creo un registro exitoso para la entidad {entity}";
     public static string AlreadyExist(string entity, string value) => $"Ya existe un {entity} con el {value} ";
     public static string NotFoundEntity(string entity, string value) => $"{entity} {value} no encontrado";
+    public static string EmailSentValid = "Se finalizo el proceso de enviar correos";
+    public static string InvalidSupportData(string value) => $"Tipo de recordatorio no soportado {value}";
 }
