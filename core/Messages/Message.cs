@@ -8,4 +8,5 @@ public static class Message
     public const string ErrorInizialiteMongoDB = "MongoDB:ConnectionString no configurado";
     public static string EntityCreateSuccess(string entity) => $"Se creo un registro exitoso para la entidad {entity}";
     public static string AlreadyExist(string entity, string value) => $"Ya existe un {entity} con el {value} ";
+    public static string NotFoundEntity(string entity, string value) => $"{entity} {value} No encontrado";
 }
