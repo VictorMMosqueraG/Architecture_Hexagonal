@@ -1,7 +1,5 @@
 namespace Application
 {
-    using Application.Interfaces.Services;
-    using Application.Services;
     using Behaviours;
     using FluentValidation;
     using MediatR;
@@ -16,8 +14,6 @@ namespace Application
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
-
-            services.AddTransient<ISimplePublishService, SimplePublishService>();
 
             return services;
         }

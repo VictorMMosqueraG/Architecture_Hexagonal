@@ -18,6 +18,20 @@ public class MongoClientRepository : MongoBaseRepository<ClientDocument>, IClien
         return docs.Select(MapToDomain);
     }
 
+    public async Task<Client?> GetByIdAsync(string id)
+    {
+        var filter = Builders<ClientDocument>.Filter.Eq(x => x.Id, id);
+        var doc    = await Collection.Find(filter).FirstOrDefaultAsync();
+        return doc is null ? null : MapToDomain(doc);
+    }
+
+    public async Task<Client?> GetByEmailAsync(string email)
+    {
+        var filter = Builders<ClientDocument>.Filter.Eq(x => x.Email, email);
+        var doc    = await Collection.Find(filter).FirstOrDefaultAsync();
+        return doc is null ? null : MapToDomain(doc);
+    }
+
     public async Task<Client> CreateAsync(Client client)
     {
         var doc = new ClientDocument

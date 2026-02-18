@@ -123,7 +123,6 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
     {
         var details = new ProblemDetails
         {
-            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.8",
             Title = "Conflict",
             Detail = exception.Message
         };
