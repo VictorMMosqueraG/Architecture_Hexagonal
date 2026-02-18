@@ -8,17 +8,21 @@ using MediatR;
 
 public class GetAllClientQueryHandler(
     IClientRepository clientRepository
-) : IRequestHandler<GetAllClientQuery, ResultDto<IEnumerable<ClientResponseDto>>>
+) : IRequestHandler<GetAllClientQuery, PaginatedResultDto<IEnumerable<ClientResponseDto>>>
 {
     private readonly IClientRepository _clientRepository = clientRepository;
 
 
-    public async Task<ResultDto<IEnumerable<ClientResponseDto>>> Handle(
+    public async Task<PaginatedResultDto<IEnumerable<ClientResponseDto>>> Handle(
         GetAllClientQuery request, 
         CancellationToken cancellationToken
     ){
-        var clients = await _clientRepository.GetAllAsync();
-
+        var (clients, total) = await _clientRepository.GetAllAsync(
+            request.Page, 
+            request.PageSize, 
+            request.Sort, 
+            request.Order
+        );
 
         var foundClients =clients.Select(c => new ClientResponseDto(
             c.Id,
@@ -29,8 +33,9 @@ public class GetAllClientQueryHandler(
             c.Status,
             c.CreatedAt
         ));
-
-        var response = ResultDto<IEnumerable<ClientResponseDto>>.Success(foundClients);
+        
+        var response = PaginatedResultDto<IEnumerable<ClientResponseDto>>
+            .Success((int)total, request.Page, request.PageSize, foundClients);
         response.Message = Message.GetAllData;
 
         return response;
