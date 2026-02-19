@@ -1,7 +1,7 @@
 # Architecture_Hexagonal
 Este repositorio contiene un esqueleto de proyecto en C# siguiendo la Arquitectura Hexagonal (también conocida como Puertos y Adaptadores). El objetivo de esta arquitectura es separar el núcleo de la aplicación (reglas de negocio y casos de uso) de las dependencias externas (UI, bases de datos, servicios HTTP, colas, etc.) mediante capas y contratos bien definidos.
 
-# Tabla de Contenidos
+## Tabla de Contenidos
 - [Motivo de la arquitectura ](#motivación-y-por-qué-elegir-hexagonal)
 - [Estructura del Proyecto](#estructura-del-proyecto)
 - [Notas sobre puertos y adaptadores](#notas-sobre-puertos-y-adaptadores)
@@ -12,32 +12,32 @@ Este repositorio contiene un esqueleto de proyecto en C# siguiendo la Arquitectu
 - [Swagger](#swagger)
 - [Estructura de Scripts](#estructura-de-scripts)
 
-# Motivación y por qué elegir Hexagonal
+### Motivación y por qué elegir Hexagonal
 
 - Separación clara de responsabilidades: el `core` define contratos (puertos) y modelos, sin referencias a infraestructuras concretas.
 - Testabilidad: los casos de uso (`application`) se pueden probar in-memory inyectando adaptadores falsos (mocks/stubs).
 - Flexibilidad y mantenibilidad: cambiar una infraestructura (por ejemplo, pasar de RabbitMQ a SQS) solo requiere implementar/adaptar un adaptador sin tocar la lógica de negocio.
 - Facilita el desarrollo en equipos y la adopción de patrones como CQRS, Mediator y Validación centralizada.
 
-# Estructura del proyecto
+### Estructura del proyecto
 
 - `api/` — Proyecto ASP.NET Core (Web API). Exposición HTTP, versionado y documentación (Swagger).
 - `application/` — Casos de uso, comandos/queries, handlers (MediatR), validaciones y DTOs específicos de los casos de uso.
 - `core/` — Entidades, interfaces (puertos), DTOs, constantes y contratos que representan el dominio y las abstracciones.
 - `infrastructure/` — Implementaciones concretas (adaptadores) de persistencia, mensajería, wrappers HTTP, almacenamiento de objetos, monitorización y otros servicios externos.
 
-# Notas sobre puertos y adaptadores
+### Notas sobre puertos y adaptadores
 
 - Los **puertos** (interfaces) deben vivir en `core/` y describir lo que la aplicación necesita (por ejemplo `IUserRepository`, `IMessagePublisher`).
 - Los **adaptadores** viven en `infrastructure/` y proveen las implementaciones concretas (`SqlUserRepository`, `RabbitMqPublisher`, `S3ObjectStore`).
 - `application/` depende de `core/` y puede recibir los puertos mediante inyección de dependencias.
 - `api/` depende de `application/` y orquesta solicitudes HTTP hacia los casos de uso.
 
-# Variables de Entorno
+### Variables de Entorno
 
 Para poder trabajar comodamente y de manera segura se requiere que se copie el archivo **.env.example** y se le ponga el nombre a **.env** y sean asignados los valores correspondientes, esto con el fin de no dejar datos sensibles al accesso facil, se podria manejar tambien mediante el uso de un gestor de secretos como pude ser Vault.
 
-# Docker
+### Docker
 El proyecto incluye una configuración de Docker Compose para levantar el entorno de persistencia necesario para el desarrollo local.
 
 Para levantar los servicios
@@ -47,7 +47,7 @@ Ejecuta el siguiente comando desde la raíz del proyecto para iniciar la base de
 docker-compose up -d
 ```
 
-# Requisitos
+### Requisitos
 
 - .NET SDK: Recomendado `dotnet 9.0` (ver `TargetFramework` en los `.csproj`). Instalar desde https://dotnet.microsoft.com/
 - `dotnet` CLI disponible en `PATH`.
@@ -55,7 +55,7 @@ docker-compose up -d
 - Variables de entorno y proveedor de secretos para credenciales (KeyVault, Vault, AWS Secrets Manager, etc.).
 - Docker y Docker Compose instalados.					
 
-# Instalación y ejecución rápida
+### Instalación y ejecución rápida
 
 1. Clonar el repositorio.
 2. Desde la raíz, restaurar paquetes y ejecutar el proyecto Web API:
@@ -68,10 +68,10 @@ dotnet run
 
 Por defecto la API arranca en `http://localhost:5000` o el puerto configurado por ASP.NET Core. Swagger estará disponible en entorno de desarrollo si está habilitado.
 
-# Swagger
+### Swagger
 Una vez el proyecto este corriendo, el proyecto se puede abrir mediante swagger para trabajar con las APIs: `https://localhost:5001/swagger/index.html`
 
-# Estructura de Scripts
+### Estructura de Scripts
 
 Docker ejecuta los archivos de `docker-entrypoint-initdb.d/` en **orden alfabético**.
 Por eso cada carpeta usa prefijo numérico y los archivos también.
@@ -90,7 +90,7 @@ Los scripts de `docker-entrypoint-initdb.d/` solo se ejecutan
 si el volumen de datos está **vacío**. Si ya existe data, se omiten.
 
 
-### Usuarios creados
+#### Usuarios creados
 
 | Usuario           | Permisos            | Usado por              |
 |-------------------|---------------------|------------------------|
@@ -100,3 +100,9 @@ si el volumen de datos está **vacío**. Si ya existe data, se omiten.
 | `billing_auditor` | read + reminders_log| Servicio de auditoría  |
 
 
+### Test
+Para este proyecto se crearon los test de integración y unitarios, no se crearon todos por temas de tiempo, pero se deja la evidencia del trabajo y estructura para los test. Para poder correr los test puedes hacerlo con el siguiente comando:
+
+```
+dotnet test
+```
