@@ -11,6 +11,7 @@ Este repositorio contiene un esqueleto de proyecto en C# siguiendo la Arquitectu
 - [Instalación y ejecución rápida](#instalación-y-ejecución-rápida)
 - [Swagger](#swagger)
 - [Estructura de Scripts](#estructura-de-scripts)
+- [Test](#test)
 
 ### Motivación y por qué elegir Hexagonal
 
