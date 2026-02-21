@@ -61,8 +61,10 @@ namespace Api
             else
             {
                 app.UseHsts();
-                app.UseHttpsRedirection();
+                // app.UseHttpsRedirection(); only prod
             }
+
+            
 
             app.UseCors("AllowAll");
             app.UseMiddleware<HeaderValidationMiddleware>();
