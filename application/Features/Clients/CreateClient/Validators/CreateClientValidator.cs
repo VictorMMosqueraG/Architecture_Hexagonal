@@ -3,8 +3,15 @@ namespace Application.Features.Clients.CreateClient.Validator;
 using Application.Features.Clients.CreateClient.Command;
 using FluentValidation;
 
+/// <summary>
+/// Validador de FluentValidation para <see cref="CreateClientCommand"/>.
+/// Se ejecuta automáticamente a través del <c>ValidationBehaviour</c> del pipeline de MediatR.
+/// </summary>
 public class CreateClientCommandValidator : AbstractValidator<CreateClientCommand>
 {
+    /// <summary>
+    /// Define las reglas de validación para cada campo del comando.
+    /// </summary>
     public CreateClientCommandValidator()
     {
         RuleFor(x => x.Name)

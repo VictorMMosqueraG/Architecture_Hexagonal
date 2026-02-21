@@ -5,9 +5,16 @@ using AutoMapper;
 using Core.Entities;
 using Core.Constants;
 
-
+/// <summary>
+/// Perfil de AutoMapper para la creación de clientes.
+/// Mapea <see cref="CreateClientRequestDto"/> a la entidad <see cref="Client"/>.
+/// </summary>
 public class CreateClientMapper : Profile
 {
+    /// <summary>
+    /// Define las reglas de mapeo, incluyendo valores por defecto
+    /// para <c>Status</c>, <c>CreatedAt</c> y <c>UpdatedAt</c>.
+    /// </summary>
     public CreateClientMapper()
     {
         CreateMap<CreateClientRequestDto, Client>()

@@ -7,12 +7,22 @@ using Core.Interfaces.Repositories;
 using Core.Messages;
 using MediatR;
 
+/// <summary>
+/// Handler que procesa <see cref="GetInvoicesSummaryQuery"/>.
+/// Carga todas las facturas y construye un resumen agrupado por estado y por cliente.
+/// </summary>
 public class GetInvoicesSummaryQueryHandler(
     IInvoiceRepository invoiceRepository
 ) : IRequestHandler<GetInvoicesSummaryQuery, ResultDto<InvoiceSummaryDto>>
 {
     private readonly IInvoiceRepository _invoiceRepository = invoiceRepository;
 
+    /// <summary>
+    /// Obtiene el resumen consolidado de todas las facturas.
+    /// </summary>
+    /// <param name="request">Query con parámetros heredados de paginación (no aplicados en el resumen).</param>
+    /// <param name="cancellationToken">Token de cancelación.</param>
+    /// <returns>Resultado con el resumen de facturas agrupado por estado y cliente.</returns>
     public async Task<ResultDto<InvoiceSummaryDto>> Handle(
         GetInvoicesSummaryQuery request,
         CancellationToken cancellationToken)
@@ -33,6 +43,11 @@ public class GetInvoicesSummaryQueryHandler(
         return response;
     }
 
+    /// <summary>
+    /// Construye el resumen agrupando las facturas por estado y por cliente.
+    /// </summary>
+    /// <param name="invoicesData">Lista completa de facturas a procesar.</param>
+    /// <returns>DTO con el resumen consolidado.</returns>
     private async Task<InvoiceSummaryDto> BuildData(List<Invoice> invoicesData)
     {
         var invoices = invoicesData.ToList();
@@ -53,4 +68,3 @@ public class GetInvoicesSummaryQueryHandler(
         );
     }
 }
-

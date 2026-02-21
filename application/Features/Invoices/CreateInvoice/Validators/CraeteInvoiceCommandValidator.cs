@@ -2,10 +2,14 @@ namespace Application.Features.Invoices.CreateInvoice.Validator;
 
 using Application.Features.Invoices.CreateInvoice.Command;
 using FluentValidation;
-using System;
 
+/// <summary>
+/// Validador de FluentValidation para <see cref="CreateInvoiceCommand"/>.
+/// Se ejecuta automáticamente a través del <c>ValidationBehaviour</c> del pipeline de MediatR.
+/// </summary>
 public class CreateInvoiceCommandValidator : AbstractValidator<CreateInvoiceCommand>
 {
+    /// <summary>Define las reglas de validación para cada campo del comando.</summary>
     public CreateInvoiceCommandValidator()
     {
         RuleFor(x => x.ClientId)
@@ -28,6 +32,9 @@ public class CreateInvoiceCommandValidator : AbstractValidator<CreateInvoiceComm
             .MaximumLength(500).WithMessage("La descripción no puede exceder los 500 caracteres.");
     }
 
+    /// <summary>Verifica que la fecha no sea anterior a la fecha actual UTC.</summary>
+    /// <param name="date">Fecha a validar.</param>
+    /// <returns><c>true</c> si la fecha es hoy o futura; <c>false</c> si es pasada.</returns>
     private bool BeAFutureDate(DateTime date)
     {
         return date.Date >= DateTime.UtcNow.Date;

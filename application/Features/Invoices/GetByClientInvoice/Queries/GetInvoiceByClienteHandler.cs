@@ -7,6 +7,11 @@ using Core.Exceptions;
 using Core.Interfaces.Repositories;
 using Core.Messages;
 using MediatR;
+
+/// <summary>
+/// Handler que procesa <see cref="GetInvoicesByClientQuery"/>.
+/// Valida que el cliente exista y retorna todas sus facturas.
+/// </summary>
 public class GetInvoicesByClientQueryHandler(
     IInvoiceRepository invoiceRepository,
     IClientRepository clientRepository
@@ -16,13 +21,20 @@ public class GetInvoicesByClientQueryHandler(
     private readonly IClientRepository  _clientRepository  = clientRepository;
     private static string EntityClient = "Client";
 
+    /// <summary>
+    /// Obtiene todas las facturas de un cliente por su ID.
+    /// </summary>
+    /// <param name="request">Query con el ID del cliente a consultar.</param>
+    /// <param name="cancellationToken">Token de cancelación.</param>
+    /// <returns>Resultado con la colección de facturas del cliente.</returns>
+    /// <exception cref="NotFoundException">Se lanza si el cliente con el ID proporcionado no existe.</exception>
     public async Task<ResultDto<IEnumerable<InvoicByClientResponseDto>>> Handle(
         GetInvoicesByClientQuery request,
         CancellationToken cancellationToken)
     {
         var foundClient = await _clientRepository.GetByIdAsync(request.ClientId);
 
-        if(foundClient==null)
+        if (foundClient == null)
             throw new NotFoundException(Message.NotFoundEntity(EntityClient, request.ClientId));
 
         var invoices = await _invoiceRepository.GetByClientIdAsync(request.ClientId);
@@ -45,5 +57,3 @@ public class GetInvoicesByClientQueryHandler(
         return response;
     }
 }
-
-

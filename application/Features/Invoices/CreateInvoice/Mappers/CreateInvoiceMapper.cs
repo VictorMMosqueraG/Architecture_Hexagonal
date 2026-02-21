@@ -5,8 +5,16 @@ using Core.Constants;
 
 namespace Application.Features.Invoices.CreateInvoice.Mappers;
 
+/// <summary>
+/// Perfil de AutoMapper para la creación de facturas.
+/// Mapea <see cref="CreateInvoiceRequestDto"/> a la entidad <see cref="Invoice"/>.
+/// </summary>
 public class CreateInvoiceMapper : Profile
 {
+    /// <summary>
+    /// Define las reglas de mapeo, incluyendo valores por defecto
+    /// para <c>Status</c>, <c>CreatedAt</c> y <c>UpdatedAt</c>.
+    /// </summary>
     public CreateInvoiceMapper()
     {
         CreateMap<CreateInvoiceRequestDto, Invoice>()
